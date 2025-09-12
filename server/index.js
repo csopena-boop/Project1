@@ -15,6 +15,8 @@ app.use(cors({ origin: env3.CORS_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
+
+app.use(express.json());
 app.use('/api/auth', require('./routes/auth'));
 
 app.get('/api/ping', (_req, res) => res.json({ ok: true }));

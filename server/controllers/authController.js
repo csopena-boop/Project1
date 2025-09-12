@@ -45,30 +45,73 @@ function refreshCookieOptions() {
   };
 }
 
-async function register(req, res) {
-  // TODO: validar inputs con Zod/Joi
-  const { email, password } = req.body || {};
-  if (!email || !password) return res.status(400).json({ message: 'Invalid' });
+async function register(req, res, next) {
+  try {
+    const { email, password, name, surname, cedula, telefono } = req.body || {};
+    if (!email || !password || !name || !surname) {
+      return res.status(400).json({ message: 'Faltan campos requeridos' });
+    }
 
-  const exists = await User2.findOne({ email });
-  if (exists) return res.status(409).json({ message: 'Email in use' });
+    const normEmail = String(email).trim().toLowerCase();            // <— ACÁ definís normEmail
+    const normCedula = cedula != null ? String(cedula).replace(/\D/g, '') : undefined;
+    const normTel = telefono != null ? String(telefono).replace(/\D/g, '') : undefined;
 
-  const passwordHash = await argon2.hash(password);
-  const user = await User2.create({ email, passwordHash });
+    // chequeo previo (igual manejamos E11000)
+    const exists = await User2.findOne({ email: normEmail }).lean();
+    if (exists) return res.status(409).json({ message: 'Email en uso' });
 
-  return res.status(201).json({ user: { id: user._id, email: user.email, roles: user.roles } });
+    const passwordHash = await argon2.hash(password);
+
+    const user = await User2.create({
+      email: normEmail,
+      passwordHash,
+      name: String(name).trim(),
+      surname: String(surname).trim(),
+      ...(normCedula && { cedula: normCedula }),
+      ...(normTel && { telefono: normTel })
+    });
+
+    return res.status(201).json({
+      user: {
+        id: user._id,
+        email: user.email,
+        roles: user.roles,
+        name: user.name,
+        surname: user.surname,
+        cedula: user.cedula,
+        telefono: user.telefono
+      }
+    });
+  } catch (err) {
+    if (err?.code === 11000) {
+      // clave duplicada (email/cedula/telefono)
+      const key = Object.keys(err.keyPattern || {})[0] || 'clave';
+      return res.status(409).json({ message: `${key} en uso` });
+    }
+    return next(err);
+  }
 }
 
-async function login(req, res) {
-  // TODO: rate limit en ruta
-  const { email, password } = req.body || {};
-  if (!email || !password) return res.status(400).json({ message: 'Invalid' });
 
-  const user = await User2.findOne({ email });
-  if (!user) return res.status(401).json({ message: 'Invalid credentials' });
+async function login(req, res) {
+  const { email, password } = req.body || {};
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Invalid' });
+  }
+
+  // normalizar
+  const normEmail = String(email).trim().toLowerCase();
+
+  // buscar por el normalizado
+  const user = await User2.findOne({ email: normEmail });
+  if (!user) {
+    return res.status(401).json({ message: 'Invalid credentials' });
+  }
 
   const ok = await argon2.verify(user.passwordHash, password);
-  if (!ok) return res.status(401).json({ message: 'Invalid credentials' });
+  if (!ok) {
+    return res.status(401).json({ message: 'Invalid credentials' });
+  }
 
   const access = signAccess(user);
   const familyId = crypto.randomUUID();
@@ -84,7 +127,18 @@ async function login(req, res) {
   });
 
   res.cookie(env2.COOKIE_NAME_REFRESH, refresh, refreshCookieOptions());
-  res.json({ access, user: { id: user._id, email: user.email, roles: user.roles } });
+  res.json({
+    access,
+    user: {
+      id: user._id,
+      email: user.email,
+      roles: user.roles,
+      name: user.name,
+      surname: user.surname,
+      cedula: user.cedula,
+      telefono: user.telefono,
+    },
+  });
 }
 
 async function refresh(req, res) {
@@ -152,9 +206,21 @@ async function logout(req, res) {
   res.status(204).end();
 }
 
-async function me(req, res) {
-  // requiere requireAuth
-  return res.json({ user: { id: req.user.id, roles: req.user.roles } });
+async function me(req, res, next) {
+  try {
+    // req.user viene del middleware requireAuth (con id y roles)
+    const user = await User2.findById(req.user.id)
+      .select('email roles name surname cedula telefono')
+      .lean();
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    return res.json({ user });
+  } catch (err) {
+    next(err);
+  }
 }
 
 module.exports = { register, login, refresh, logout, me };
