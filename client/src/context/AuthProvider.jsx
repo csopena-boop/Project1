@@ -80,6 +80,30 @@ export function AuthProvider({ children }) {
     setPersistState(false);
   }
 
+// dentro de AuthProvider.jsx
+async function signUp({ name, surname, email, password, remember, doc }) {
+  const payload = {
+    name: name?.trim(),
+    surname: surname?.trim(),
+    email: email?.trim()?.toLowerCase(),
+    password: password ?? "",
+    doc: doc ?? "",
+  };
+
+  const res = await http.post("/api/auth/register", payload);
+  // espero { access, user } como en login
+  setAccess(res.data.access);
+  setUser(res.data.user);
+
+  if (remember) {
+    localStorage.setItem(PERSIST_KEY, "true");
+    setPersistState(true);
+  } else {
+    localStorage.removeItem(PERSIST_KEY);
+    setPersistState(false);
+  }
+}
+
   const value = useMemo(
     () => ({
       access,
@@ -97,6 +121,7 @@ export function AuthProvider({ children }) {
       },
       login,
       logout,
+      signUp
     }),
     [access, user, loading, persist]
   );

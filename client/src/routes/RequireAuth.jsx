@@ -8,6 +8,6 @@ export default function RequireAuth() {
   console.log('GUARD', { loading, isAuthenticated });
   const location = useLocation();
   if (loading) return <div className="p-6">Loading...</div>
-  if (!isAuthenticated) return <Navigate to="/login" state={{ from: location }} replace />
+  if (!isAuthenticated) return <Navigate to="/register" state={{ from: location }} replace />
   return <Outlet />;
 }
