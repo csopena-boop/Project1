@@ -21,7 +21,7 @@ const userSchema = new Schema(
     surname: { type: String, required: true, trim: true, maxlength: 80 },
 
     // guardalo normalizado a dígitos en el controller si usás puntos/guiones
-    cedula: {
+    doc: {
       type: String,
       required: true,
       unique: true,
@@ -29,7 +29,7 @@ const userSchema = new Schema(
       match: [/^\d{7,8}$/, 'cédula inválida']
     },
 
-    telefono: {
+    phone: {
       type: String,
       required: false,        // si querés obligatorio, poné true; yo lo dejaría opcional
       // ejemplo simple: 8–12 dígitos

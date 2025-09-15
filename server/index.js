@@ -9,14 +9,14 @@ const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
+app.use(express.json());
 app.use(morgan('dev'));
 app.use(helmet());
 app.use(cors({ origin: env3.CORS_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
-
-app.use(express.json());
 app.use('/api/auth', require('./routes/auth'));
 
 app.get('/api/ping', (_req, res) => res.json({ ok: true }));
