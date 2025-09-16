@@ -2,8 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
-
-
+import './css/register.css';
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -22,7 +21,6 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-
       await login(email, password, remember);
       navigate(from, { replace: true });
     } catch (err) {
@@ -33,15 +31,15 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen grid place-items-center p-6">
-      <form onSubmit={onSubmit} className="w-full max-w-sm space-y-4 bg-white p-6 rounded-2xl shadow">
-        <h1 className="text-xl font-semibold">Iniciar sesión</h1>
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+    <div>
+      <div className="register-container">
+      <form onSubmit={onSubmit}>
+        <h1>Logo</h1>
+        {error && <p>{error}</p>}
 
-        <label className="block text-sm">
+        <label>
           Email
           <input
-            className="w-full border rounded px-3 py-2 mt-1"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -50,10 +48,9 @@ export default function Login() {
           />
         </label>
 
-        <label className="block text-sm">
+        <label>
           Contraseña
           <input
-            className="w-full border rounded px-3 py-2 mt-1"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -62,15 +59,24 @@ export default function Login() {
           />
         </label>
 
-        <label className="inline-flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
-          Recordarme
+        <label className="remember" htmlFor="remember">
+            Recordarme
+          <input
+            type="checkbox"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+          />
         </label>
 
-        <button disabled={loading} className="w-full py-2 rounded bg-black text-white disabled:opacity-60">
+        <button className="login-button" disabled={loading}>
           {loading ? "Entrando…" : "Entrar"}
         </button>
       </form>
+
+      <button className="register-button" type="button" onClick={() => navigate("/register")}>
+        ¿Todavia no tienes una cuenta? Registrate
+      </button>
+       </div>
     </div>
   );
 }

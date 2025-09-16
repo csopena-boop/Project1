@@ -1,0 +1,108 @@
+/* src/css/login.css */
+
+body {
+  display: flex;
+  justify-content: center; /* centro horizontal */
+  align-items: center;     /* centro vertical */
+  background: linear-gradient(to bottom, #021028, #064761);
+}
+
+
+.register-container {
+  max-width: 400px;
+  margin: 80px auto;        /* centra horizontal con auto y baja un poco */
+  padding: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 30px;
+  background: rgba(0, 0, 0, 0.5);      /* color de fondo del form */
+  color: #ffffee;              /* texto blanco */
+  box-shadow: 0 2px 8px #074058;
+}
+
+.register-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.register-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.register-container label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.register-container input[type="email"],
+.register-container input[type="password"],
+.register-container input[type="text"] {
+  padding: 8px;
+  border: 1px solid #666;
+  border-radius: 20px;
+  background: #2a2a2a;
+  color: #fff;
+}
+
+.register-container input:focus {
+  outline: none;
+  border-color: #aaa;
+}
+
+.login-button {
+  padding: 10px;
+  border: none;
+  border-radius: 20px;
+  background: #ff601a;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+  margin-bottom: 20px;
+}
+
+.register-button {
+  border: none;
+  border-radius: 20px;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+  text-align: center;
+}
+
+.register-button:hover {
+  color: #6ee7b7;
+  border-color: #6ee7b7;
+}
+
+.login-button:hover {
+  background: #0026ff;
+}
+
+.register-container .secondary-btn:hover {
+  color: #fff;
+  border-color: #fff;
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+  justify-content: center;   /* centrado */
+  gap: 8px;
+  font-size: 12px;
+  margin: 6px 0 10px;
+  cursor: pointer;
+}
+
+.remember input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+  accent-color: #6ee7b7;
+}
+
+.remember input[type="checkbox"]:focus-visible {
+  outline: 2px solid #6ee7b7;
+  outline-offset: 2px;
+}
