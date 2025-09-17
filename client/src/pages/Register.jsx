@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
+import "./css/register2.css";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -12,13 +13,13 @@ export default function Register() {
     surname: "",
     email: "",
     password: "",
-    doc:"",
+    doc: "",
     remember: true,
   });
 
   const [submitting, setSubmitting] = useState(false);
-  const [apiError, setApiError] = useState("");        // errores generales
-  const [fieldErrors, setFieldErrors] = useState({});  // { name: "...", email: "...", ... }
+  const [apiError, setApiError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
 
   function onChange(e) {
     const { name, value, type, checked } = e.target;
@@ -42,23 +43,21 @@ export default function Register() {
 
     try {
       await signUp(payload);
-
-      // Si tu backend hace autologin, isAuthenticated queda true y te mando a /dashboard.
-      // Si no hace autologin, te mando a /login.
       if (isAuthenticated) {
         navigate("/dashboard", { replace: true });
       } else {
-        navigate("/login", { replace: true, state: { justRegistered: true, email: payload.email } });
+        navigate("/login", {
+          replace: true,
+          state: { justRegistered: true, email: payload.email },
+        });
       }
     } catch (err) {
-      // Distintos sabores de error. Adaptá si tu backend devuelve otra forma.
       const status = err?.response?.status;
       const data = err?.response?.data;
 
       if (status === 409) {
         setFieldErrors({ email: "Ese correo ya está registrado." });
       } else if (status === 400 && Array.isArray(data?.details)) {
-        // Espero algo como: details: [{ path: "email", message: "..." }, ...]
         const mapped = {};
         for (const d of data.details) {
           const key = d.path || d.field || "general";
@@ -75,22 +74,18 @@ export default function Register() {
   }
 
   return (
-    <div className="register-page" style={{ maxWidth: 420, margin: "48px auto" }}>
-      <h1 style={{ marginBottom: 8 }}>Crear cuenta</h1>
-      <p style={{ marginBottom: 24 }}>
+    <div className="div-form">
+      <h1>Crear cuenta</h1>
+      <p>
         ¿Ya tenés cuenta? <Link to="/login">Iniciá sesión</Link>
       </p>
 
-      {apiError ? (
-        <div role="alert" style={{ background: "#fee2e2", padding: 12, borderRadius: 8, marginBottom: 16 }}>
-          {apiError}
-        </div>
-      ) : null}
+      {apiError ? <div role="alert">{apiError}</div> : null}
 
-      <form onSubmit={onSubmit} noValidate>
-        <div style={{ display: "grid", gap: 12 }}>
+      <form onSubmit={onSubmit} noValidate className="register-form">
+        <div className="form-grid">
+          Nombre
           <div>
-            <label htmlFor="name">Nombre</label>
             <input
               id="name"
               name="name"
@@ -100,94 +95,77 @@ export default function Register() {
               value={form.name}
               onChange={onChange}
               aria-invalid={!!fieldErrors.name}
-              style={{ width: "100%" }}
             />
-            {fieldErrors.name && <small style={{ color: "#b91c1c" }}>{fieldErrors.name}</small>}
+            {fieldErrors.name && <small>{fieldErrors.name}</small>}
           </div>
-
+          Apellido
           <div>
-            <label htmlFor="surname">Apellido</label>
             <input
               id="surname"
               name="surname"
               type="text"
+              placeholder=""
               autoComplete="family-name"
               value={form.surname}
               onChange={onChange}
               aria-invalid={!!fieldErrors.surname}
-              style={{ width: "100%" }}
             />
-            {fieldErrors.surname && <small style={{ color: "#b91c1c" }}>{fieldErrors.surname}</small>}
+            {fieldErrors.surname && <small>{fieldErrors.surname}</small>}
           </div>
-
+          Correo electrónico
           <div>
-            <label htmlFor="email">Correo</label>
             <input
               id="email"
               name="email"
               type="email"
+              placeholder=""
               autoComplete="email"
               value={form.email}
               onChange={onChange}
               aria-invalid={!!fieldErrors.email}
-              style={{ width: "100%" }}
             />
-            {fieldErrors.email && <small style={{ color: "#b91c1c" }}>{fieldErrors.email}</small>}
+            {fieldErrors.email && <small>{fieldErrors.email}</small>}
           </div>
-
+          Contraseña
           <div>
-            <label htmlFor="password">Contraseña</label>
             <input
               id="password"
               name="password"
               type="password"
+              placeholder=""
               autoComplete="new-password"
               value={form.password}
               onChange={onChange}
               aria-invalid={!!fieldErrors.password}
-              style={{ width: "100%" }}
             />
-            {fieldErrors.password && <small style={{ color: "#b91c1c" }}>{fieldErrors.password}</small>}
+            {fieldErrors.password && <small>{fieldErrors.password}</small>}
           </div>
-
+          Documento
           <div>
-            <label htmlFor="doc">Numero de Documento</label>
             <input
               id="doc"
               name="doc"
               type="text"
+              placeholder=""
               autoComplete="off"
               value={form.doc}
               onChange={onChange}
               aria-invalid={!!fieldErrors.doc}
-              style={{ width: "100%" }}
             />
-            {fieldErrors.doc && <small style={{ color: "#b91c1c" }}>{fieldErrors.doc}</small>}
+            {fieldErrors.doc && <small>{fieldErrors.doc}</small>}
           </div>
 
-          <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div>
             <input
               type="checkbox"
               name="remember"
               checked={form.remember}
               onChange={onChange}
             />
-            Recordarme en este dispositivo
-          </label>
+            <span>Recordarme en este dispositivo</span>
+          </div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            style={{
-              padding: "10px 14px",
-              borderRadius: 8,
-              border: "1px solid #111",
-              background: submitting ? "#ddd" : "#111",
-              color: "#fff",
-              cursor: submitting ? "not-allowed" : "pointer",
-              marginTop: 8,
-            }}
-          >
+          <button type="submit" disabled={submitting}>
             {submitting ? "Creando..." : "Crear cuenta"}
           </button>
         </div>

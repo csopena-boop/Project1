@@ -68,8 +68,8 @@ body {
   border-radius: 20px;
   background: transparent;
   cursor: pointer;
-  transition: background 0.3s, color 0.3s, border-color 0.3s;
   text-align: center;
+  transition: transform 1s ease-in-out, background 1s ease-in-out;
 }
 
 .register-button:hover {
@@ -78,7 +78,8 @@ body {
 }
 
 .login-button:hover {
-  background: #0026ff;
+  background: #6ee7b7;
+  transform: scale(1.05); 
 }
 
 .register-container .secondary-btn:hover {
