@@ -2,7 +2,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
-import "./css/register2.css";
+// IMPORTÁ el CSS que me pasaste (ajustá la ruta según tu árbol)
+import "./css/register.css";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -73,103 +74,86 @@ export default function Register() {
     }
   }
 
-  return (
-    <div className="div-form">
-      <h1>Crear cuenta</h1>
+return (
+  <div className="register-container">
+    <h1>Crear cuenta</h1>
+    <form onSubmit={onSubmit} noValidate>
+      Nombre
+      <input
+        id="name"
+        name="name"
+        type="text"
+        placeholder=""
+        autoComplete="given-name"
+        autoFocus
+        value={form.name}
+        onChange={onChange}
+        aria-invalid={!!fieldErrors.name}
+      />
+      {fieldErrors.name && <small>{fieldErrors.name}</small>}
+
+      Apellido
+      <input
+        id="surname"
+        name="surname"
+        type="text"
+        placeholder=""
+        autoComplete="family-name"
+        value={form.surname}
+        onChange={onChange}
+        aria-invalid={!!fieldErrors.surname}
+      />
+      {fieldErrors.surname && <small>{fieldErrors.surname}</small>}
+
+      Email
+      <input
+        id="email"
+        name="email"
+        type="email"
+        placeholder=""
+        autoComplete="email"
+        value={form.email}
+        onChange={onChange}
+        aria-invalid={!!fieldErrors.email}
+      />
+      {fieldErrors.email && <small>{fieldErrors.email}</small>}
+
+      Password
+      <input
+        id="password"
+        name="password"
+        type="password"
+        placeholder=""
+        autoComplete="new-password"
+        value={form.password}
+        onChange={onChange}
+        aria-invalid={!!fieldErrors.password}
+      />
+      {fieldErrors.password && <small>{fieldErrors.password}</small>}
+
+      Documento
+      <input
+        id="doc"
+        name="doc"
+        type="text"
+        placeholder=""
+        autoComplete="off"
+        value={form.doc}
+        onChange={onChange}
+        aria-invalid={!!fieldErrors.doc}
+      />
+      {fieldErrors.doc && <small>{fieldErrors.doc}</small>}
+
+      <button type="submit" className="login-button" disabled={submitting}>
+        {submitting ? "Creando..." : "Crear cuenta"}
+      </button>
+
       <p>
         ¿Ya tenés cuenta? <Link to="/login">Iniciá sesión</Link>
       </p>
 
       {apiError ? <div role="alert">{apiError}</div> : null}
-
-      <form onSubmit={onSubmit} noValidate className="register-form">
-        <div className="form-grid">
-          Nombre
-          <div>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              autoComplete="given-name"
-              autoFocus
-              value={form.name}
-              onChange={onChange}
-              aria-invalid={!!fieldErrors.name}
-            />
-            {fieldErrors.name && <small>{fieldErrors.name}</small>}
-          </div>
-          Apellido
-          <div>
-            <input
-              id="surname"
-              name="surname"
-              type="text"
-              placeholder=""
-              autoComplete="family-name"
-              value={form.surname}
-              onChange={onChange}
-              aria-invalid={!!fieldErrors.surname}
-            />
-            {fieldErrors.surname && <small>{fieldErrors.surname}</small>}
-          </div>
-          Correo electrónico
-          <div>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              placeholder=""
-              autoComplete="email"
-              value={form.email}
-              onChange={onChange}
-              aria-invalid={!!fieldErrors.email}
-            />
-            {fieldErrors.email && <small>{fieldErrors.email}</small>}
-          </div>
-          Contraseña
-          <div>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              placeholder=""
-              autoComplete="new-password"
-              value={form.password}
-              onChange={onChange}
-              aria-invalid={!!fieldErrors.password}
-            />
-            {fieldErrors.password && <small>{fieldErrors.password}</small>}
-          </div>
-          Documento
-          <div>
-            <input
-              id="doc"
-              name="doc"
-              type="text"
-              placeholder=""
-              autoComplete="off"
-              value={form.doc}
-              onChange={onChange}
-              aria-invalid={!!fieldErrors.doc}
-            />
-            {fieldErrors.doc && <small>{fieldErrors.doc}</small>}
-          </div>
-
-          <div>
-            <input
-              type="checkbox"
-              name="remember"
-              checked={form.remember}
-              onChange={onChange}
-            />
-            <span>Recordarme en este dispositivo</span>
-          </div>
-
-          <button type="submit" disabled={submitting}>
-            {submitting ? "Creando..." : "Crear cuenta"}
-          </button>
-        </div>
-      </form>
-    </div>
-  );
+    </form>
+  </div>
+);
 }

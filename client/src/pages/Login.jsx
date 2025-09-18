@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 import './css/register.css';
+import logo from "../../content/Logo.png";
+
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -33,8 +35,10 @@ export default function Login() {
   return (
     <div>
       <div className="register-container">
+      <h1>Login</h1>
+      <img src={logo} alt="Logo" />
       <form onSubmit={onSubmit}>
-        <h1>Logo</h1>
+        <image src="../content/logo.png" alt=""></image>
         {error && <p>{error}</p>}
 
         <label>
