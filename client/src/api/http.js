@@ -1,29 +1,60 @@
-import axios from 'axios';
+// src/api/http.js (ejemplo con axios)
+import axios from "axios";
 
-// 1) Crear UNA instancia compartida
+let accessTokenGetter = () => null;
+export function setAccessTokenGetter(fn) { accessTokenGetter = fn; }
+
 const http = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,   // 2) Tu API base (ej: http://localhost:5000)
-  withCredentials: true,                   // 3) Enviar/recibir cookies (refresh token)
-  timeout: 15000                           // 4) Cortar requests colgados a los 15s
+  baseURL: import.meta.env.VITE_API_URL || "",
+  withCredentials: true, // cookies del refresh
 });
 
-// 5) “Getter” que trae el access token desde donde lo tengas (Context, store)
-let getAccessToken = null;
-export function setAccessTokenGetter(fn) {
-  getAccessToken = fn; // lo seteás una vez desde tu AuthProvider
-}
-
-// 6) Interceptor de REQUEST: agrega Authorization si hay access
+// Pone el Authorization si tenés access
 http.interceptors.request.use((config) => {
-  const token = getAccessToken ? getAccessToken() : null;
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  const access = accessTokenGetter?.();
+  if (access && !config.headers.Authorization) {
+    config.headers.Authorization = `Bearer ${access}`;
+  }
   return config;
 });
 
-// 7) Interceptor de RESPONSE (mínimo): dejar pasar o rechazar
+// Single-flight para refresh
+let refreshPromise = null;
+
 http.interceptors.response.use(
   (res) => res,
-  (err) => Promise.reject(err) // acá después metemos refresh inteligente
+  async (error) => {
+    const status = error?.response?.status;
+    const original = error.config || {};
+    const url = original.url || "";
+
+    // nunca intentes refrescar para el propio /auth/refresh o si ya reintentaste
+    if (status === 401 && !original._retry && !url.includes("/auth/refresh")) {
+      original._retry = true;
+
+      if (!refreshPromise) {
+        refreshPromise = http.post("/api/auth/refresh", undefined, { withCredentials: true })
+          .finally(() => { refreshPromise = null; });
+      }
+
+      try {
+        const { data } = await refreshPromise; // espera una sola
+        // reintenta la request original con el nuevo token
+        original.headers = { ...(original.headers || {}), Authorization: `Bearer ${data.access}` };
+        return http.request(original);
+      } catch (e) {
+        // si el refresh falla (401/429), no sigas en loop
+        return Promise.reject(e);
+      }
+    }
+
+    // si el refresh mismo devuelve 401/429, no reintentes nada
+    if (url.includes("/auth/refresh") && (status === 401 || status === 429)) {
+      return Promise.reject(error);
+    }
+
+    return Promise.reject(error);
+  }
 );
 
 export default http;

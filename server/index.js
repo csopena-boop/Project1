@@ -21,8 +21,10 @@ app.use('/api/auth', require('./routes/auth'));
 
 app.get('/api/ping', (_req, res) => res.json({ ok: true }));
 
-app.use(errorHandler);
-
 connectDB().then(() => {
   app.listen(env3.PORT, () => console.log(`API on :${env3.PORT}`));
 });
+
+app.use(errorHandler);
+
+module.exports = app;

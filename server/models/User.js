@@ -8,7 +8,7 @@ const userSchema = new Schema(
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'email inválido']
+      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Email inválido"],
     },
     passwordHash: { type: String, required: true },
 
@@ -26,14 +26,14 @@ const userSchema = new Schema(
       required: true,
       unique: true,
       // ejemplo simple: 7–8 dígitos + posible dígito verificador
-      match: [/^\d{7,8}$/, 'cédula inválida']
+      match: [/^\d{7,8}$/, 'Documento inválido']
     },
 
     phone: {
       type: String,
       required: false,        // si querés obligatorio, poné true; yo lo dejaría opcional
       // ejemplo simple: 8–12 dígitos
-      match: [/^\d{8,12}$/, 'teléfono inválido'],
+      match: [/^\d{8,12}$/, 'Telefono inválido'],
       index: true             // índice normal para búsquedas, sin unique
     }
   },

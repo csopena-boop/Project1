@@ -47,11 +47,6 @@ body {
   color: #fff;
 }
 
-.register-container input:focus {
-  outline: none;
-  border-color: #aaa;
-}
-
 .login-button {
   padding: 10px;
   border: none;
@@ -62,6 +57,7 @@ body {
   cursor: pointer;
   transition: background 0.3s, color 0.3s, border-color 0.3s;
   margin-bottom: 20px;
+  transition: transform 0.3s ease-in-out;
 }
 
 .register-button {
@@ -125,4 +121,55 @@ body {
   transition: transform 0.3s ease-in-out;
   opacity: 1;
   transition: opacity 0.3s ease;
+}
+
+/* src/css/login.css o donde tengas tus estilos */
+
+.input-error {
+  border: 2px solid #ff601a;     /* borde rojo/naranja */
+  background-color: #ff000021;   /* fondo rojizo transparente */
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.input-error:focus {
+  outline: none;
+  border-color: #ff601a;
+  box-shadow: 0 0 6px #ff601a;         /* brillito rojo */
+}
+
+/* Mensaje de error */
+.error-msg {
+  color: #ff601a;
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
+}
+
+
+.register-container input:focus {
+  outline: none;
+  border-color: #aaa;
+}
+
+/* Error state, siempre por encima */
+.register-container input.input-error,
+.register-container input.input-error:hover,
+.register-container input.input-error:focus {
+  border: 2px solid #ff601a;
+  background-color: #ff000021;     /* rojito translúcido */
+  box-shadow: 0 0 6px rgba(255, 96, 26, 0.5);
+}
+.register-container input.input-error:focus {
+  border-color: #ff601a;
+  box-shadow: 0 0 8px #ff601a;         /* brillito rojo */
+}
+
+.register-container p a {
+  color: #6ee7b7;
+  text-decoration: none;
+  font-weight: bold;
+}
+.register-container p a:hover {
+  text-decoration: underline;
+  color: #e22b62;
 }
